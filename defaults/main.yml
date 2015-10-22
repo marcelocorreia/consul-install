@@ -1,0 +1,9 @@
+---
+consul:
+  version: 0.5.2
+  arch: amd64
+
+install:
+  dir : /usr/local/bin
+  web_dir: /var/www/html/consul
+  download_location: https://dl.bintray.com/mitchellh/consul

@@ -1,0 +1,20 @@
+---
+- name: Downloads and install Hashicorp's Consul
+  get_url: >
+    url="{{ install.download_location }}/{{ consul.version }}_linux_{{ consul.arch }}.zip"
+    dest="{{ install.dir }}"
+    mode=0755
+  sudo: yes
+  tags: hashicorp nomad
+
+
+- name: Downloads and install Hashicorp's Consul
+  get_url: >
+    url="{{ install.download_location }}/{{ consul.version }}_linux_{{ consul.arch }}.zip"
+    dest="{{ install.dir }}"
+    mode=0755
+  sudo: yes
+  tags: hashicorp nomad
+
+
+https://dl.bintray.com/mitchellh/consul/0.5.2_web_ui.zip
