@@ -1,7 +1,7 @@
 ---
 - name: Downloads Hashicorp's Consul
   get_url: >
-    url="{{ install.download_location}}/{{ consul.version}}_linux_{{ consul.arch}}.zip"
+    url="{{ install.download_location }}/{{ consul.version }}_linux_{{ consul.arch }}.zip"
     dest="/tmp/"
     mode=0755
   sudo: yes
@@ -11,7 +11,7 @@
 
 - name: Downloads Hashicorp's Consul Web UI
   get_url: >
-    url="{{ install.download_location}}/{{ consul.version}}_web_ui.zip"
+    url="{{ install.download_location}}/{{ consul.version }}_web_ui.zip"
     dest="/tmp/"
     mode=0755
   sudo: yes
@@ -19,22 +19,16 @@
     - hashicorp
     - consul
 
-- name: Downloads Hashicorp's Consul
-  unarchive: >
-    src="/tmp/{{ consul.version}}_linux_{{ consul.arch}}.zip"
-    dest="{{ install.dir }}"
-    mode=0755
+- name: Install Hashicorp's Consul
+  shell: unzip -u -d {{ install.dir }} /tmp/{{ consul.version }}_linux_{{ consul.arch}}.zip ; chmod 770 {{ install.dir }}/consul ; chown root:staff {{ install.dir }}/consul
+
   sudo: yes
   tags:
   - hashicorp
   - consul
 
-- name: Downloads Hashicorp's Consul Web UI
-  unarchive: >
-    src="/tmp/{{ consul.version}}_web_ui.zip"
-    dest="{{ install.web_dir }}"
-    mode=0755
-
+- name: Install Hashicorp's Consul Web UI
+  shell: unzip -u -d {{ install.web_dir }} /tmp/{{ consul.version }}_web_ui.zip
   sudo: yes
   tags:
     - hashicorp

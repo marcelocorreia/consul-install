@@ -5,5 +5,5 @@ consul:
 
 install:
   dir : /usr/local/bin
-  web_dir: /var/www/html/consul
+  web_dir: /usr/share/nginx/html
   download_location: https://dl.bintray.com/mitchellh/consul
