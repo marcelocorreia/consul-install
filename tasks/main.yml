@@ -1,36 +1,122 @@
 ---
-- name: Downloads Hashicorp's Consul
+- name: Downloads Package
   get_url: >
-    url="{{ install.download_location }}/{{ consul.version }}_linux_{{ consul.arch }}.zip"
-    dest="/tmp/"
+    url="{{ install.download_location}}/{{ app.version }}_{{ app.arch }}.zip"
+    dest="/tmp/{{ app.version }}_{{ app.arch }}.zip"
     mode=0755
+    force={{ install.force_download | default(false)}}
+  sudo: no
+  tags:
+    - hashicorp
+    - consul
+    - install
+    - download
+
+- name: Unpacks to location
+  unarchive: >
+    src=/tmp/{{ app.version }}_{{ app.arch }}.zip
+    dest={{ install.dir }}
+    copy=no
+    mode=755
   sudo: yes
   tags:
     - hashicorp
     - consul
+    - install
+    - unarchive
 
-- name: Downloads Hashicorp's Consul Web UI
+- name: Fix permissions on files (Workaround while waiting for 2.0)
+  file: path={{ install.dir }}/{{ item }}
+    owner={{ app.file_owner | default('root') }}
+    group={{ app.file_group | default('root') }}
+    mode=755
+  sudo: yes
+  with_items:
+    - "{{ install.file_list }}"
+  tags:
+    - hashicorp
+    - consul
+    - install
+    - workaround
+
+- name: Downloads UI Package
   get_url: >
-    url="{{ install.download_location}}/{{ consul.version }}_web_ui.zip"
-    dest="/tmp/"
+    url="{{ install.download_location}}/{{ app.version }}_web_ui.zip"
+    dest="/tmp/{{ app.version }}_web_ui.zip"
     mode=0755
-  sudo: yes
+    force={{ install.force_download | default(false)}}
+  sudo: no
   tags:
     - hashicorp
     - consul
-
-- name: Install Hashicorp's Consul
-  shell: unzip -u -d {{ install.dir }} /tmp/{{ consul.version }}_linux_{{ consul.arch}}.zip ; chmod 770 {{ install.dir }}/consul ; chown root:staff {{ install.dir }}/consul
-
-  sudo: yes
-  tags:
-  - hashicorp
-  - consul
-
-- name: Install Hashicorp's Consul Web UI
-  shell: unzip -u -d {{ install.web_dir }} /tmp/{{ consul.version }}_web_ui.zip
-  sudo: yes
-  tags:
-    - hashicorp
-    - consul
+    - install
+    - download
     - ui
+
+- name: Ensures web directory exists
+  file: path={{ install.web_dir }} mode=755 owner={{ install.web_dir_owner}} group={{ install.web_dir_group}} state=directory
+  sudo: yes
+
+
+
+- name: Unpacks UI to location
+  unarchive: >
+    src=/tmp/{{ app.version }}_web_ui.zip
+    dest={{ install.web_dir }}
+    copy=no
+    mode=755
+  sudo: yes
+  tags:
+    - hashicorp
+    - consul
+    - install
+    - unarchive
+
+
+
+# - name: Downloads Hashicorp's Consul
+#   get_url: >
+#     url="{{ install.download_location }}/{{ consul.version }}_linux_{{ consul.arch }}.zip"
+#     dest="/tmp/"
+#     mode=0755
+#   sudo: no
+#   tags:
+#     - hashicorp
+#     - consul
+#     - install
+#
+# - name: Downloads Hashicorp's Consul Web UI
+#   get_url: >
+#     url="{{ install.download_location}}/{{ consul.version }}_web_ui.zip"
+#     dest="/tmp/"
+#     mode=0755
+#   sudo: no
+#   tags:
+#     - hashicorp
+#     - consul
+#     - install
+#
+# - name: Install Hashicorp's Consul
+#   shell: unzip -u -d {{ install.dir }} /tmp/{{ consul.version }}_linux_{{ consul.arch}}.zip; chmod 770 {{ install.dir }}/consul ; chown root:staff {{ install.dir }}/consul
+#   sudo: yes
+#   tags:
+#   - hashicorp
+#   - consul
+#   - install
+#
+# - name: Ensures web directory exists
+#   - file: path={{ install.web_dir }}
+#     state=directory
+#     group={{ install.file_group | default('root')}}
+#     owner={{ install.file_owner | default('root')}}
+#     mode=0755
+#
+#
+# - name: Install Hashicorp's Consul Web UI
+#   shell: if [ ! -d {{ install.web_dir }} ]; then mkdir {{install.web_dir}}; fi; if [ -d /tmp/dist/ ];then rm -rf /tmp/dist; fi; unzip -u -d /tmp/ /tmp/{{ consul.version }}_web_ui.zip; mv /tmp/dist/* {{ install.web_dir }}
+#   sudo: yes
+#   tags:
+#     - hashicorp
+#     - consul
+#     - ui
+#     - install

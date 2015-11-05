@@ -1,20 +1,44 @@
 ---
-- name: Downloads and install Hashicorp's Consul
+- name: Downloads Hashicorp's Consul
   get_url: >
-    url="{{ install.download_location }}/{{ consul.version }}_linux_{{ consul.arch }}.zip"
+    url="{{ install.download_location}}/{{ consul.version}}_linux_{{ consul.arch}}.zip"
+    dest="/tmp/"
+    mode=0755
+  sudo: yes
+  tags:
+    - hashicorp
+    - consul
+
+- name: Downloads Hashicorp's Consul Web UI
+  get_url: >
+    url="{{ install.download_location}}/{{ consul.version}}_web_ui.zip"
+    dest="/tmp/"
+    mode=0755
+  sudo: yes
+  tags:
+    - hashicorp
+    - consul
+
+- name: Downloads Hashicorp's Consul
+  unarchive: >
+    src="/tmp/{{ consul.version}}_linux_{{ consul.arch}}.zip"
     dest="{{ install.dir }}"
     mode=0755
   sudo: yes
-  tags: hashicorp nomad
+  tags:
+  - hashicorp
+  - consul
 
-
-- name: Downloads and install Hashicorp's Consul
-  get_url: >
-    url="{{ install.download_location }}/{{ consul.version }}_linux_{{ consul.arch }}.zip"
-    dest="{{ install.dir }}"
+- name: Downloads Hashicorp's Consul Web UI
+  unarchive: >
+    src="/tmp/{{ consul.version}}_web_ui.zip"
+    dest="{{ install.web_dir }}"
     mode=0755
   sudo: yes
-  tags: hashicorp nomad
+  tags:
+    - hashicorp
+    - consul
+    - ui
 
 
 https://dl.bintray.com/mitchellh/consul/0.5.2_web_ui.zip

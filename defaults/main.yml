@@ -1,9 +1,17 @@
 ---
-consul:
+app:
+  name: consul
   version: 0.5.2
-  arch: amd64
+  arch: linux_amd64
+  file_group: vagrant
+
 
 install:
   dir : /usr/local/bin
-  web_dir: /usr/share/nginx/html
   download_location: https://dl.bintray.com/mitchellh/consul
+  web_dir: /usr/share/nginx/html/consul
+  web_dir_owner: root
+  web_dir_group: root
+  
+  file_list:
+    - consul
